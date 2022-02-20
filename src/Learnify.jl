@@ -4,6 +4,6 @@ include("regression/Regression.jl")
 
 using .Regression
 
-export ElasticNet
+export ElasticNet, Lasso
 
 end

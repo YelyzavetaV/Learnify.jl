@@ -17,9 +17,9 @@ Elastic Net regression method.
 function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
     itₘ::Integer=1000, ϵ=1e-5) where {F}
 
-    N, M = size(X, 1), size(X, 2)
-    λ = α * β * N
-    γ = α * (1.0 - β) * N
+    M, N = size(X, 1), size(X, 2)
+    λ = α * β * M
+    γ = α * (1.0 - β) * M
 
     R = y - X * θ
     z = sum(X .^ 2, dims=1)
@@ -32,7 +32,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
     while (~converged && it < itₘ)
         it += 1
         θₘ, 𝝙 = 0.0, 0.0
-        for j = 1:M
+        for j = 1:N
             z[j] == 0 && continue
             θ̃ = θ[j]
             if θ̃ ≠ 0
