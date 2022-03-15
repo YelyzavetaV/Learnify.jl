@@ -38,6 +38,8 @@ Elastic Net regression model that solves the optimization problem
 where X and y are the training data with M samples and N features, and ‖⋅‖₁ and ‖⋅‖
 denote l₁ and l₂ norms, respectively.
 If `intercept` is true, training data will be centered.
+`itₘ` is a maximal number of iterations and `ϵ` is a convergence tolerance for the
+duality gap.
 
 # References
 [1] J. Friedman et al. "Regularization Paths for Generalized Linear Models via Coordinate
@@ -73,6 +75,8 @@ function (m::ElasticNet)(pts::AbstractVecOrMat)
     pts * m.θ .+ m.I
 end
 
+"""
+"""
 function Lasso(
     X::Matrix{F},
     y::Vector{F};
@@ -82,6 +86,9 @@ function Lasso(
     ϵ=1e-5,
 ) where {F}
     ElasticNet(X, y; α=α, β=1.0, intercept=intercept, tₘ=itₘ, ϵ=ϵ)
+end
+
+mutable struct Logistic{F} <: LinearModel
 end
 
 end
