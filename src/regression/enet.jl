@@ -1,10 +1,8 @@
-module Enet
-
 using LinearAlgebra: norm
 
 """
     enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
-        iₘ::Integer=1000, ϵ=1e-5)
+        mit::Integer=1000, ϵ=1e-5)
 
 Elastic Net regression method.
 
@@ -15,7 +13,7 @@ Elastic Net regression method.
     12:2825-2830, 2011.
 """
 function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
-    itₘ::Integer=1000, ϵ=1e-5) where {F}
+    mit::Integer=1000, ϵ=1e-5) where {F}
 
     M, N = size(X, 1), size(X, 2)
     λ = α * β * M
@@ -29,7 +27,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
 
     it = 0
     converged = false
-    while (~converged && it < itₘ)
+    while (~converged && it < mit)
         it += 1
         θₘ, 𝝙 = 0.0, 0.0
         for j = 1:N
@@ -46,7 +44,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
             𝝙 = max(𝝙, abs(θ[j] - θ̃))
             θₘ = max(θₘ, abs(θ[j]))
         end
-        if (θₘ == 0 || 𝝙 / θₘ < ϵ || it == itₘ)
+        if (θₘ == 0 || 𝝙 / θₘ < ϵ || it == mit)
             c₁ = c₂ = c₃ = 1
             d = maximum(abs.(X' * R - γ * θ))
             if d > λ
@@ -67,9 +65,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
     end
     if ~converged
         @warn """Elastic Net algorithm did not converge: try increasing the number of
-            maximal allowed iterations itₘ or decreasing the tolerance ϵ."""
+            maximal allowed iterations mit or decreasing the tolerance ϵ."""
     end
     return it, η
-end
-
 end

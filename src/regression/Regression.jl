@@ -1,11 +1,8 @@
 module Regression
 
+export ElasticNet, Lasso
+
 include("linear.jl")
 include("enet.jl")
-
-using .Linear: ElasticNet, Lasso
-using .Enet: enet!
-
-export enet!, ElasticNet, Lasso
 
 end
