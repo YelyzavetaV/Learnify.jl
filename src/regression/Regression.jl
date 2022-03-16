@@ -1,8 +1,10 @@
 module Regression
 
-export ElasticNet, Lasso
+export enet!, ElasticNet, Lasso
+export Logistic
 
-include("linear.jl")
+include("base.jl")
 include("enet.jl")
+include("logistic.jl")
 
 end
