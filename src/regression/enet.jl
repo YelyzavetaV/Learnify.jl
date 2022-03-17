@@ -3,7 +3,7 @@ using LinearAlgebra: norm
 
 """
     enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
-        mit::Integer=1000, ϵ=1e-5)
+        max_it::Integer=1000, ϵ=1e-5)
 
 Elastic Net regression method.
 
@@ -14,7 +14,15 @@ Elastic Net regression method.
     12:2825-2830, 2011.
 """
 function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
-    mit::Integer=1000, ϵ=1e-5) where {F}
+    max_it::Integer=1000, ϵ=1e-5) where {F}
+
+    if (α == 0 && β == 0)
+        @warn """It is not adviced to use Elastic Net algorithm with no regularization
+                (α=0 and β=0)."""
+    end
+    if ~(0 ≤ β ≤ 1)
+        throw(DomainError(β, "β must lie in range [0, 1]."))
+    end
 
     M, N = size(X, 1), size(X, 2)
     λ = α * β * M
@@ -28,7 +36,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
 
     it = 0
     converged = false
-    while (~converged && it < mit)
+    while (~converged && it < max_it)
         it += 1
         θₘ, 𝝙 = 0.0, 0.0
         for j = 1:N
@@ -45,7 +53,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
             𝝙 = max(𝝙, abs(θ[j] - θ̃))
             θₘ = max(θₘ, abs(θ[j]))
         end
-        if (θₘ == 0 || 𝝙 / θₘ < ϵ || it == mit)
+        if (θₘ == 0 || 𝝙 / θₘ < ϵ || it == max_it)
             c₁ = c₂ = c₃ = 1
             d = maximum(abs.(X' * R - γ * θ))
             if d > λ
@@ -66,7 +74,7 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
     end
     if ~converged
         @warn """Elastic Net algorithm did not converge: try increasing the number of
-            maximal allowed iterations mit or decreasing the tolerance ϵ."""
+            maximal allowed iterations max_it or decreasing the tolerance ϵ."""
     end
     return it, η
 end
@@ -90,7 +98,7 @@ end
         α=1.0,
         β=0.5,
         intercept::Bool=true,
-        mit::Integer=1000,
+        max_it::Integer=1000,
         ϵ=1e-5,
     )
 
@@ -99,7 +107,7 @@ Elastic Net regression model that solves the optimization problem
 where X and y are the training data with M samples and N features, and ‖⋅‖₁ and ‖⋅‖
 denote l₁ and l₂ norms, respectively.
 If `intercept` is true, training data will be centered.
-`mit` is a maximal number of iterations and `ϵ` is a convergence tolerance for the
+`max_it` is a maximal number of iterations and `ϵ` is a convergence tolerance for the
 duality gap.
 
 # References
@@ -117,13 +125,13 @@ mutable struct ElasticNet{F} <: LinearRegression
         α=1.0,
         β=0.5,
         intercept::Bool=true,
-        mit::Integer=1000,
+        max_it::Integer=1000,
         ϵ=1e-5,
     ) where {F}
         X̄, ȳ = preprocess!(X, y, intercept)
         θ = zeros(F, size(X, 2))
 
-        Nᵢ, η = enet!(θ, X, y, α, β; mit, ϵ)
+        Nᵢ, η = enet!(θ, X, y, α, β; max_it, ϵ)
 
         I = (ȳ .- X̄ * θ)[1]
 
@@ -137,14 +145,22 @@ function (m::ElasticNet)(pts::AbstractVecOrMat)
 end
 
 """
+    Lasso(
+        X::Matrix{F},
+        y::Vector{F};
+        α=1.0,
+        intercept::Bool=true,
+        max_it::Integer=1000,
+        ϵ=1e-5,
+    )
 """
 function Lasso(
     X::Matrix{F},
     y::Vector{F};
     α=1.0,
     intercept::Bool=true,
-    mit::Integer=1000,
+    max_it::Integer=1000,
     ϵ=1e-5,
 ) where {F}
-    ElasticNet(X, y; α=α, β=1.0, intercept=intercept, mit=mit, ϵ=ϵ)
+    ElasticNet(X, y; α=α, β=1.0, intercept=intercept, max_it=max_it, ϵ=ϵ)
 end
