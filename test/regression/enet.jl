@@ -1,8 +1,14 @@
 using Test
 using Learnify: ElasticNet
+using Learnify: Regression
 
-x = [5.0 2.0 3.0; -0.1 -3.0 -1.0; -2.0 3.0 3.0]
-y = [1.0, 3.0, -0.9]
+X = ([0.0; 0.0; 0.0])[:, :]
+y = [0.0, 0.0, 0.0]
 @testset "enet_throws" begin
-    @test_throws DomainError ElasticNet(x, y; β=-1)
+    @test_throws DomainError ElasticNet(X, y; β=-1)
+end
+
+@testset "preprocess_no_intercept" begin
+    X̄, ȳ = Regression.preprocess!(X, y, false)
+    @test (X̄ == [0.0] && ȳ == 0.0)
 end

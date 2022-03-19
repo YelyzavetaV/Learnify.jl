@@ -79,9 +79,9 @@ function enet!(θ::Vector{F}, X::Matrix{F}, y::Vector{F}, α, β;
     return it, η
 end
 
-function preprocess!(X::M, y::V, intercept::Bool=true) where {M<:AbstractMatrix, V<:AbstractVector}
-    X̄ = zeros(eltype(X), size(X, 2))
-    ȳ = zeros(eltype(y), size(y, 1))
+function preprocess!(X::Matrix{F}, y::Vector{F}, intercept::Bool=true) where {F}
+    X̄ = zeros(F, size(X, 2))
+    ȳ = 0.0
     if intercept
         X̄ = mean(X, dims=1)
         ȳ = mean(y)
