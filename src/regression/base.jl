@@ -1,1 +1,1 @@
-abstract type LinearRegression end
+abstract type AbstractLinearRegression end

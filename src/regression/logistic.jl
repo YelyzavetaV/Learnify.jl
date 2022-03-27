@@ -1,2 +1,2 @@
-mutable struct Logistic{F} <: LinearRegression
+mutable struct Logistic{F} <: AbstractLinearRegression
 end

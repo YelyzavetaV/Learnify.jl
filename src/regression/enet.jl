@@ -114,10 +114,10 @@ duality gap.
 [1] J. Friedman et al. "Regularization Paths for Generalized Linear Models via Coordinate
     Descent". J. Stat. Softw. 33(1):1-22, 2010.
 """
-mutable struct ElasticNet{F} <: LinearRegression
+mutable struct ElasticNet{F} <: AbstractLinearRegression
     I::F
     θ::Vector{F}
-    Nᵢ::Integer
+    nit::Integer
     η
     function ElasticNet(
         X::Matrix{F},
@@ -131,13 +131,12 @@ mutable struct ElasticNet{F} <: LinearRegression
         X̄, ȳ = preprocess!(X, y, intercept)
         θ = zeros(F, size(X, 2))
 
-        Nᵢ, η = enet!(θ, X, y, α, β; max_it, ϵ)
+        nit, η = enet!(θ, X, y, α, β; max_it, ϵ)
 
         I = (ȳ .- X̄ * θ)[1]
 
-        new{F}(I, θ, Nᵢ, η)
+        new{F}(I, θ, nit, η)
     end
-
 end
 
 function (m::ElasticNet)(pts::AbstractVecOrMat)
