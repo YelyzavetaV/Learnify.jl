@@ -1,4 +1,4 @@
-name: Check source
+name: Test source
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   testing:
-    name: Test source code on ${{ github.event_name }}
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
