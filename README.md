@@ -1,1 +1,2 @@
-
+![GitHub CI](https://github.com/YelyzavetaV/Learnify.jl/actions/workflows/check-src.yml/badge.svg?branch=main)
+[![Coverage](https://codecov.io/gh/YelyzavetaV/Learnify.jl/branch/main/graph/badge.svg?token=YZGDN08KTE)](https://codecov.io/gh/YelyzavetaV/Learnify.jl)
